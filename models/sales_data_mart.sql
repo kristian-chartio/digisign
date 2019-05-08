@@ -11,6 +11,7 @@ SELECT DATE_TRUNC('day', ("Account"."created_date" AT TIME ZONE 'UTC'))::DATE AS
        "Opportunity"."type" AS "Type"
 FROM "salesforce"."account" AS "Account"
 INNER JOIN "salesforce"."opportunity" AS "Opportunity" ON "Opportunity"."account_id" = "Account"."id"
+WHERE ("Opportunity"."type" != 'Churn')
 GROUP BY DATE_TRUNC('day', ("Account"."created_date" AT TIME ZONE 'UTC'))::DATE,
          "Account"."name",
          "Account"."id",
