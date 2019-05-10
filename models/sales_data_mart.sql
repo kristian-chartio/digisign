@@ -9,7 +9,9 @@ SELECT "Account"."id" AS "Account Id",
        "Opportunity"."amount" AS "Opportunity Amount",
        "Opportunity"."stage_name" AS "Stage Name",
        "Opportunity"."type" AS "Opportunity Type",
-       "User"."email" AS "Opportunity Owner"
+       "User"."email" AS "Opportunity Owner",
+       DATE_TRUNC('day', ("Opportunity"."created_date" AT TIME ZONE 'UTC'))::DATE AS "Opportunity Created Date",
+       DATE_TRUNC('day', ("Opportunity"."close_date" AT TIME ZONE 'UTC'))::DATE AS "Opportunity Close Date"
 FROM "salesforce"."account" AS "Account"
 INNER JOIN "salesforce"."user" AS "User" ON "Account"."owner_id" = "User"."id"
 INNER JOIN "salesforce"."opportunity" AS "Opportunity" ON "Opportunity"."account_id" = "Account"."id"
@@ -23,5 +25,7 @@ GROUP BY "Account"."id",
          "Opportunity"."amount",
          "Opportunity"."stage_name",
          "Opportunity"."type",
-         "User"."email"
+         "User"."email",
+         DATE_TRUNC('day', ("Opportunity"."created_date" AT TIME ZONE 'UTC'))::DATE,
+         DATE_TRUNC('day', ("Opportunity"."close_date" AT TIME ZONE 'UTC'))::DATE
 ORDER BY "Account Id" ASC
