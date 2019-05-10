@@ -1,24 +1,27 @@
 {{ config(materialized='view') }}
 
-SELECT DATE_TRUNC('day', ("Account"."created_date" AT TIME ZONE 'UTC'))::DATE AS "Day of Created Date",
-       "Account"."name" AS "Name",
-       "Account"."id" AS "Id",
-       "Account"."annual_revenue" AS "Annual Revenue",
+SELECT "Account"."id" AS "Account Id",
+       "Account"."name" AS "Account Name",
        "Account"."number_of_employees" AS "Number Of Employees",
-       "Opportunity"."amount" AS "Amount",
+       DATE_TRUNC('day', ("Account"."created_date" AT TIME ZONE 'UTC'))::DATE AS "Account Created Date",
+       "Opportunity"."id" AS "Opportunity Id",
        "Opportunity"."lead_source" AS "Lead Source",
+       "Opportunity"."amount" AS "Opportunity Amount",
        "Opportunity"."stage_name" AS "Stage Name",
-       "Opportunity"."type" AS "Type"
+       "Opportunity"."type" AS "Opportunity Type",
+       "User"."email" AS "Opportunity Owner"
 FROM "salesforce"."account" AS "Account"
+INNER JOIN "salesforce"."user" AS "User" ON "Account"."owner_id" = "User"."id"
 INNER JOIN "salesforce"."opportunity" AS "Opportunity" ON "Opportunity"."account_id" = "Account"."id"
 WHERE ("Opportunity"."type" != 'Churn')
-GROUP BY DATE_TRUNC('day', ("Account"."created_date" AT TIME ZONE 'UTC'))::DATE,
+GROUP BY "Account"."id",
          "Account"."name",
-         "Account"."id",
-         "Account"."annual_revenue",
          "Account"."number_of_employees",
-         "Opportunity"."amount",
+         DATE_TRUNC('day', ("Account"."created_date" AT TIME ZONE 'UTC'))::DATE,
+         "Opportunity"."id",
          "Opportunity"."lead_source",
+         "Opportunity"."amount",
          "Opportunity"."stage_name",
-         "Opportunity"."type"
-ORDER BY "Day of Created Date" ASC
+         "Opportunity"."type",
+         "User"."email"
+ORDER BY "Account Id" ASC
