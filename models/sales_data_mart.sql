@@ -11,10 +11,12 @@ SELECT "Account"."id" AS "Account Id",
        "Opportunity"."type" AS "Opportunity Type",
        "User"."email" AS "Opportunity Owner",
        DATE_TRUNC('day', ("Opportunity"."created_date" AT TIME ZONE 'UTC'))::DATE AS "Opportunity Created Date",
-       DATE_TRUNC('day', ("Opportunity"."close_date" AT TIME ZONE 'UTC'))::DATE AS "Opportunity Close Date"
+       DATE_TRUNC('day', ("Opportunity"."close_date" AT TIME ZONE 'UTC'))::DATE AS "Opportunity Close Date",
+       "Contact"."email" AS "Contact Email"
 FROM "salesforce"."account" AS "Account"
 INNER JOIN "salesforce"."user" AS "User" ON "Account"."owner_id" = "User"."id"
 INNER JOIN "salesforce"."opportunity" AS "Opportunity" ON "Opportunity"."account_id" = "Account"."id"
+INNER JOIN "salesforce"."contact" AS "Contact" ON "Contact"."account_id" = "Account"."id"
 WHERE ("Opportunity"."type" != 'Churn')
 GROUP BY "Account"."id",
          "Account"."name",
@@ -27,5 +29,6 @@ GROUP BY "Account"."id",
          "Opportunity"."type",
          "User"."email",
          DATE_TRUNC('day', ("Opportunity"."created_date" AT TIME ZONE 'UTC'))::DATE,
-         DATE_TRUNC('day', ("Opportunity"."close_date" AT TIME ZONE 'UTC'))::DATE
+         DATE_TRUNC('day', ("Opportunity"."close_date" AT TIME ZONE 'UTC'))::DATE,
+         "Contact"."email"
 ORDER BY "Account Id" ASC
